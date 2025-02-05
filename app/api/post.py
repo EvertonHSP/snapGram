@@ -2,8 +2,6 @@ from flask_restful import Resource, reqparse
 from app.models import Post, Usuario
 from app.extensions import db
 
-# Classe para operações com um único post
-
 
 class PostResource(Resource):
 
@@ -26,8 +24,6 @@ class PostResource(Resource):
             db.session.commit()
             return {'message': 'Post deleted'}, 200
         return {'message': 'Post not found'}, 404
-
-# Classe para operações com a lista de posts
 
 
 class PostListResource(Resource):

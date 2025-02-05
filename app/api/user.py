@@ -7,7 +7,6 @@ import re
 class ProfileResource(Resource):
     @login_required
     def get(self):
-        """Endpoint para obter o perfil do usuário atual."""
         if not current_user.is_authenticated:
             return {"error": "Usuário não autenticado"}, 401
 
@@ -21,7 +20,6 @@ class ProfileResource(Resource):
 class UpdateResource(Resource):
     @login_required
     def put(self):
-        """Endpoint para atualizar informações do usuário."""
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=False, trim=True)
         parser.add_argument('email', type=str, required=False, trim=True)
