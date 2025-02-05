@@ -1,0 +1,145 @@
+
+.header {
+    background-color: #000000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 1%;
+}
+.info {
+    background-color: #000000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 1%;
+}
+
+body {
+    background-color: #000000;
+    color: white;
+
+}
+.top-left {
+    margin-left: 1%;
+    text-decoration: none;
+}
+
+.top-right {
+    margin-right: 1%;
+    text-decoration: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    font-family: "Helvetica", Arial, sans-serif;
+    font-size: 1.3vw;
+    font-weight: bold;
+}
+
+.profile-container {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+
+
+.profile-picture {
+    width: 10vw;
+    height: 10vw;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+h2 {
+
+    font-family: "Helvetica", Arial, sans-serif;
+    font-size: 2vw;
+    font-weight: bold;
+    color: white;
+}
+
+
+.photo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    margin: 0 -0px;
+}
+
+.photo-item {
+    flex: 0 0 calc(33.33% - 0.7%);
+    margin: 0.3%;
+    box-sizing: border-box;
+}
+
+.square-image {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 100%;
+}
+
+.square-image img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5%;
+}
+
+.upload-btn-container {
+    text-align: center;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.upload-btn:hover {
+    background-color: #3A4147;
+}
+
+
+.upload-btn-container {
+    text-align: center;
+}
+
+.upload-btn {
+    background-color: #49535C;
+    color: white;
+    border: none;
+    padding: 1% 2%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 1%;
+}
+
+.file-selected-image {
+    width: 15%;
+    height: 15%;
+    display: none;
+    position: relative;
+    overflow: hidden;
+    margin: auto;
+    margin-top: 3%;
+}
+
+#thumbnail {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}

@@ -1,0 +1,78 @@
+{% extends 'homepage.html' %}
+
+{% block titulo %}
+    imediagram :: {{ usuario.username }}
+{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/p.css') }}">
+    <div class="header">
+        <a href="{{ url_for('feed') }}" class="top-left">Feed</a>
+        <a href="{{ url_for('homepage') }}" class="top-right">Sair</a>
+
+    </div>
+    <div class="profile-container">
+        <div class="profile-picture">
+            <img src="{{ url_for('static', filename='style/img/fotoPerfil.png') }}" alt="Foto de Perfil">
+        </div>
+        <h2>{{ usuario.username }}</h2>
+    </div>
+
+
+
+    {% if current_user.is_authenticated and current_user.id == usuario.id %}
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('perfil', id_usuario=usuario.id) }}">
+            {{ form.csrf_token }}
+            <div class="upload-btn-container">
+                <label for="foto" class="upload-btn">Selecionar</label>
+                <input type="file" name="foto" accept="image/*" id="foto" style="display: none;">
+                <div id="file-selected-image" class="file-selected-image">
+                    <img id="thumbnail" src="" alt="Miniatura da foto">
+                </div>
+            </div>
+            <div class="upload-btn-container">
+                <input type="submit" value="Upload" class="upload-btn">
+            </div>
+        </form>
+    {% endif %}
+
+    {% if fotos %}
+
+    <div class="photo-grid">
+        {% for foto in fotos %}
+            <div class="photo-item">
+                <div class="square-image">
+                    <img src="{{ url_for('static', filename='fotos_posts/' + foto.imagem) }}" alt="Foto de {{ usuario.username }}">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    <script>
+        const fileInput = document.getElementById('foto');
+        const thumbnailImage = document.getElementById('thumbnail');
+        const fileSelectedImage = document.getElementById('file-selected-image');
+
+        fileInput.addEventListener('change', (event) => {
+            if (event.target.files.length > 0) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    thumbnailImage.src = e.target.result;
+                    fileSelectedImage.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                thumbnailImage.src = '';
+                fileSelectedImage.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}

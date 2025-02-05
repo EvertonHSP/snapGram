@@ -1,0 +1,33 @@
+{% block formulario %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/criarconta.css') }}">
+<div class="form-container">
+    <form method="POST">
+        {{ form.csrf_token }}
+        <h2 class="titulo-criar-conta">Criar Conta</h2>
+
+        <div class="input-container">
+            <label for="username">Nome de Usuário</label>
+            {{ form.username() }}
+        </div>
+
+        <div class="input-container">
+            <label for="email">Endereço de E-mail</label>
+            {{ form.email() }}
+        </div>
+
+        <div class="input-container">
+            <label for="senha">Senha</label>
+            {{ form.senha() }}
+        </div>
+
+        <div class="input-container">
+            <label for="confirmacao_senha">Confirmação de Senha</label>
+            {{ form.confirmacao_senha() }}
+        </div>
+        <button type="submit" class="custom-button">Criar conta</button>
+        <a href="{{ url_for('routes.homepage') }}" class="link-homepage">login</a>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='scripts/criarconta.js') }}"></script>
+
+{% endblock formulario %}

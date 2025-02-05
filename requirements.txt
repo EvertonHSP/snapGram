@@ -1,0 +1,15 @@
+Flask
+Flask-RESTful
+Flask-Login
+Flask-JWT-Extended
+Flask-SQLAlchemy
+Flask-Bcrypt
+Flask-Migrate
+Flask-WTF
+python-dotenv
+Werkzeug
+WTForms
+marshmallow
+SQLAlchemy
+bcrypt
+email-validator
