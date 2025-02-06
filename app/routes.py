@@ -7,6 +7,7 @@ routes = Blueprint('routes', __name__)
 
 
 @routes.route('/', methods=["GET"])
+@routes.route('/homepage', methods=["GET"])
 def homepage():
 
     form = FormLogin()
@@ -26,15 +27,15 @@ def feed():
 
 
 @routes.route('/perfil', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def perfil():
+    ''' print(f"Headers recebidos: {request.headers}")
+     user_id = get_jwt_identity()
+     print(f"Usuário autenticado: {user_id}")
+     usuario = Usuario.query.get(user_id)
 
-    print(f"Headers recebidos: {request.headers}")
-    user_id = get_jwt_identity()
-    print(f"Usuário autenticado: {user_id}")
-    usuario = Usuario.query.get(user_id)
-
-    if not usuario:
-        return jsonify({"error": "Usuário não encontrado"}), 404
-
-    return render_template("perfil.html", usuario=usuario)
+     if not usuario:
+         return jsonify({"error": "Usuário não encontrado"}), 404
+ '''
+  #   return render_template("perfil.html", usuario=usuario)
+    return render_template("perfil.html")
