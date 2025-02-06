@@ -66,7 +66,6 @@ O backend responderá às requisições servindo páginas via **Routes** ou forn
 ### **Frontend**  
 - **HTML/CSS**  
 - **JavaScript**  
-- **Bootstrap** (Design responsivo)  
 
 ### **Banco de Dados**  
 - **SQLite** (inicialmente, com migração futura para **PostgreSQL**)  
