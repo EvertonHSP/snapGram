@@ -36,7 +36,8 @@ O backend responderá às requisições servindo páginas via **Routes** ou forn
 ✅ Cadastro de usuários (**funcional**)  
 🚧 **Feed de postagens** (**Inacessível por Problemas de lógica**)  
 🚧 **Integração completa do token JWT** (**Problemas de lógica**)  
-🚧 **acesso ao perfil** (**Inacessível por Problemas de lógica**) 
+🚧 **acesso ao perfil** (**Inacessível por Problemas de lógica**)
+
 🔄 **Curtidas e comentários** (**falta implementação**)  
 🔄 **Gerenciamento de perfil** (**falta implementação**)  
 
@@ -45,7 +46,7 @@ O backend responderá às requisições servindo páginas via **Routes** ou forn
 
 ## **2. Problemas Conhecidos**  
 
-- **Token JWT**: Erros na integração para autenticação em todas as rotas.  
+- **Token JWT**: Erros na integração para autenticação.  
 - **Feed**: Funcionalidade ainda não implementada completamente.  
 - **Curtidas e Comentários**: Em desenvolvimento.  
 
