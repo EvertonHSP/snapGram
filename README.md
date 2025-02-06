@@ -86,8 +86,8 @@ Antes de iniciar, certifique-se de ter instalado:
 
 #### **1. Clone o Repositório**  
 ```bash  
-git clone https://github.com/seu-usuario/SnapGram.git
-cd SnapGram  
+git clone https://github.com/EvertonHSP/snapGram.git
+cd snapGram  
 ```  
 
 #### **2. Crie um Ambiente Virtual**  
