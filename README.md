@@ -14,7 +14,7 @@ O **SnapGram** é uma plataforma de rede social desenvolvida para conectar pesso
 
 ### 🚧 Em Desenvolvimento 🚧  
 
-Atualmente, apenas o cadastro de usuários no banco de dados através da página **"Criar Conta"** está funcionando corretamente. Outras funcionalidades ainda estão sendo implementadas, porém há erros no acesso ao **feed**, devido a problemas na lógica dos tokens. A correção está em andamento.  
+Atualmente, apenas o cadastro de usuários no banco de dados através da página **"Criar Conta"** está funcionando corretamente. Outras funcionalidades ainda estão sendo implementadas, porém há erros no acesso ao **perfil**, devido a problemas na lógica dos tokens. A correção está em andamento.  
 
 A API do SnapGram gera um **token JWT** após o login/cadastro, enviado em formato JSON para o usuário. Esse token permite realizar requisições autenticadas enquanto estiver válido, possibilitando ações como:  
 
@@ -27,14 +27,14 @@ O **token é temporário** e será excluído automaticamente ao sair da conta. C
 
 As rotas do backend **não redirecionam páginas**, apenas as servem. O cliente (frontend) será responsável por gerenciar a interface utilizando scripts, enviando requisições para:  
 
-- **Manipular a página** (dados dinâmicos)  
-- **Carregar templates** (migração de páginas)  
+- **Manipular a página** (dados dinâmicos) !podem exigir autenticação dependendo da ação 
+- **Carregar templates** (migração de páginas) !podem exigir autenticação dependendo da página
 
 O backend responderá às requisições servindo páginas via **Routes** ou fornecendo dados através da **API RESTful**, exigindo autenticação conforme necessário.  
 
 ### **Funcionalidades em Desenvolvimento**  
 ✅ Cadastro de usuários (**funcional**)  
-🚧 **Feed de postagens** (**Inacessível por Problemas de lógica**)  
+🚧 **Feed de postagens** (**implementando**)  
 🚧 **Integração completa do token JWT** (**Problemas de lógica**)  
 🚧 **acesso ao perfil** (**Inacessível por Problemas de lógica**)
 
@@ -47,7 +47,7 @@ O backend responderá às requisições servindo páginas via **Routes** ou forn
 ## **2. Problemas Conhecidos**  
 
 - **Token JWT**: Erros na integração para autenticação.  
-- **Feed**: Funcionalidade ainda não implementada completamente.  
+- **perfil**: não acessível pelos erros na integração para autenticação.
 - **Curtidas e Comentários**: Em desenvolvimento.  
 
 ---
@@ -115,4 +115,4 @@ Abra o navegador e acesse:
 ```  
 http://127.0.0.1:5000  
 ```  
-O feed ainda está sofrendo com a lógica errada do token, então você ainda não vai conseguir acessa-lo, porém o criar conta funciona, então a api consegue registrar você
+O perfil ainda está sofrendo com a lógica errada do token, então você ainda não vai conseguir acessa-lo, porém o criar conta funciona, então a api consegue registrar você, o script então chama a rota do feed, que é uma rota pública
