@@ -14,7 +14,7 @@ O **SnapGram** é uma plataforma de rede social desenvolvida para conectar pesso
 
 ### 🚧 Em Desenvolvimento 🚧  
 
-Atualmente, apenas o cadastro de usuários no banco de dados através da página **"Criar Conta"** está funcionando corretamente. Outras funcionalidades ainda estão sendo implementadas, porém há erros no acesso ao **perfil**, devido a problemas na lógica dos tokens. A correção está em andamento.  
+Atualmente, apenas o **"login"** e o cadastro de usuários no banco de dados através da página **"Criar Conta"** estão funcionando corretamente. Outras funcionalidades ainda estão sendo implementadas, porém há erros no acesso ao **perfil**, devido a problemas na lógica dos tokens. A correção está em andamento.  
 
 A API do SnapGram gera um **token JWT** após o login/cadastro, enviado em formato JSON para o usuário. Esse token permite realizar requisições autenticadas enquanto estiver válido, possibilitando ações como:  
 
@@ -33,7 +33,10 @@ As rotas do backend **não redirecionam páginas**, apenas as servem. O cliente 
 O backend responderá às requisições servindo páginas via **Routes** ou fornecendo dados através da **API RESTful**, exigindo autenticação conforme necessário.  
 
 ### **Funcionalidades em Desenvolvimento**  
-✅ Cadastro de usuários (**funcional**)  
+
+✅ **Cadastro de usuários** (**funcional**)  
+✅ **Login** (**funcional**)
+
 🚧 **Feed de postagens** (**implementando**)  
 🚧 **Integração completa do token JWT** (**Problemas de lógica**)  
 🚧 **acesso ao perfil** (**Inacessível por Problemas de lógica**)
@@ -115,4 +118,4 @@ Abra o navegador e acesse:
 ```  
 http://127.0.0.1:5000  
 ```  
-O perfil ainda está sofrendo com a lógica errada do token, então você ainda não vai conseguir acessa-lo, porém o criar conta funciona, então a api consegue registrar você, o script então chama a rota do feed, que é uma rota pública
+O perfil ainda está sofrendo com a lógica errada do token, então você ainda não vai conseguir acessa-lo, porém o login e o criar conta funcionam, então a api consegue registrar você, o script então chama a rota do feed, que é uma rota pública

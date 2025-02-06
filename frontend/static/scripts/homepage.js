@@ -3,23 +3,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (form) {
         form.addEventListener('submit', function (event) {
-            event.preventDefault();  // Previne o envio tradicional do formulário
+            event.preventDefault();
 
             const email = form.email.value;
             const senha = form.senha.value;
 
-            // Chama a função de login que faz a requisição para a API
+
             loginUser(email, senha);
         });
     }
 
-    // Esconde o rótulo quando o campo for preenchido (como no criarconta.js)
+
     const inputFields = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
 
     inputFields.forEach(inputField => {
         inputField.addEventListener('input', function () {
             const label = inputField.parentElement.querySelector('label');
-            if (label) { // Verifica se o label existe antes de alterar
+            if (label) {
                 label.style.display = inputField.value.trim() !== '' ? 'none' : 'block';
             }
         });
@@ -29,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
 function loginUser(email, senha) {
     const data = {
         email: email,
-        password: senha // Certifique-se de que o backend espera 'password'
+        password: senha
     };
 
-    fetch('/api/auth/login', {  // Confirme se a rota da API é essa
+    fetch('/api/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -43,11 +43,11 @@ function loginUser(email, senha) {
         .then(response => response.json())
         .then(data => {
             if (data.access_token) {
-                // Armazena o token JWT
+
                 localStorage.setItem('access_token', data.access_token);
 
                 alert("Login realizado com sucesso!");
-                window.location.href = '/feed'; // Redireciona para o feed ou outra página
+                window.location.href = '/feed';
             } else {
                 alert(data.error || "Erro ao fazer login!");
             }

@@ -7,7 +7,7 @@ function criarConta(username, email, senha, confirmacaoSenha) {
     const data = {
         username: username,
         email: email,
-        password: senha  // Mantém a chave 'password' conforme esperado no backend
+        password: senha
     };
 
     fetch('/api/auth/register', {
@@ -21,11 +21,11 @@ function criarConta(username, email, senha, confirmacaoSenha) {
         .then(response => response.json())
         .then(data => {
             if (data.message) {
-                alert(data.message); // Exibe mensagem de sucesso ou erro
+                alert(data.message);
                 if (data.message.includes("Usuário criado com sucesso")) {
-                    // Armazena o token JWT no localStorage
+
                     localStorage.setItem('access_token', data.access_token);
-                    window.location.href = '/feed'; // Redireciona ao feed após a criação
+                    window.location.href = '/feed';
                 }
             } else {
                 alert(data.error || "Erro ao criar conta!");
@@ -45,23 +45,23 @@ document.querySelector('form').addEventListener('submit', function (event) {
     const senha = document.querySelector('[name="senha"]').value;
     const confirmacaoSenha = document.querySelector('[name="confirmacao_senha"]').value;
 
-    // Verifica se todos os campos foram preenchidos
+
     if (!username || !email || !senha || !confirmacaoSenha) {
         alert('Todos os campos devem ser preenchidos!');
         return;
     }
 
-    // Verifica se as senhas coincidem
+
     if (senha !== confirmacaoSenha) {
         alert('As senhas não coincidem!');
         return;
     }
 
-    // Chama a função para criar a conta
+
     criarConta(username, email, senha, confirmacaoSenha);
 });
 
-// Esconde o rótulo quando o campo for preenchido
+
 const inputFields = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
 
 inputFields.forEach(inputField => {
