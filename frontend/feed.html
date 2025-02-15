@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>snapGram :: Feed</title>
+    <link rel="stylesheet" type="text/css" href="static/style/feed.css">
+    <script src="static/scripts/feed.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <a href="#" class="top-left">Perfil</a>
+        <a href="homepage.html" class="top-right">Sair</a>
+    </div>
+
+    <h2>Feed</h2>
+
+    <ul class="photo-grid" id="photo-grid">
+        <!-- As fotos serão carregadas dinamicamente pelo JavaScript -->
+    </ul>
+
+    <script>
+        // Função para carregar as fotos do feed
+        async function carregarFotos() {
+            try {
+                const response = await fetch('http://localhost:5000/api/fotos');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar fotos');
+                }
+                const fotos = await response.json();
+
+                const photoGrid = document.getElementById('photo-grid');
+
+                fotos.forEach(foto => {
+                    const photoItem = document.createElement('li');
+                    photoItem.className = 'photo-item';
+
+                    photoItem.innerHTML = `
+                        <div class="photo-info">
+                            <div class="user-info">
+                                <img src="static/style/img/fotoPerfil.png" alt="Foto de perfil" class="profile-image">
+                                <p class="photo-username">${foto.usuario.username}</p>
+                            </div>
+                            <div class="square-image">
+                                <img src="static/fotos_posts/${foto.imagem}" alt="Foto de ${foto.usuario.username}">
+                            </div>
+                            <p class="photo-timestamp">${foto.data_criacao}</p>
+                        </div>
+                    `;
+
+                    photoGrid.appendChild(photoItem);
+                });
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar o feed. Tente novamente.');
+            }
+        }
+
+        // Carrega as fotos quando a página é carregada
+        document.addEventListener('DOMContentLoaded', carregarFotos);
+    </script>
+</body>
+
+</html>

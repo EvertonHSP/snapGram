@@ -1,10 +1,8 @@
-
 import os
+from datetime import timedelta  # Importe timedelta para definir o tempo de expiração
 from dotenv import load_dotenv
 
-
 load_dotenv()
-
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv(
@@ -16,3 +14,6 @@ class Config:
     JWT_TOKEN_LOCATION = ["headers"]
     JWT_HEADER_NAME = "Authorization"
     JWT_HEADER_TYPE = "Bearer"
+    
+    # Defina o tempo de expiração do token para 2 dias
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=2)

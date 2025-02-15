@@ -6,6 +6,7 @@ from app.models import Usuario, TokenBlacklist
 from app.extensions import db
 
 
+
 class RegisterResource(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -68,9 +69,12 @@ class LogoutResource(Resource):
 
 
 def generate_unique_token(usuario_id):
+    from flask import current_app  
+    print(f"Chave secreta usada para gerar o token: {current_app.config['JWT_SECRET_KEY']}")
     while True:
 
-        token = create_access_token(identity=usuario_id)
+        token = create_access_token(identity=str(usuario_id))
+
         print(f"Token gerado: {token}")
 
         if TokenBlacklist.query.filter_by(token=token).first():

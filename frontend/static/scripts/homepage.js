@@ -47,7 +47,7 @@ function loginUser(email, senha) {
                 localStorage.setItem('access_token', data.access_token);
 
                 alert("Login realizado com sucesso!");
-                window.location.href = '/feed';
+                window.location.href = '/feed.html';
             } else {
                 alert(data.error || "Erro ao fazer login!");
             }

@@ -1,3 +1,4 @@
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 function criarConta(username, email, senha, confirmacaoSenha) {
     if (senha !== confirmacaoSenha) {
         alert("As senhas não coincidem!");
@@ -10,7 +11,7 @@ function criarConta(username, email, senha, confirmacaoSenha) {
         password: senha
     };
 
-    fetch('/api/auth/register', {
+    fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,7 +26,7 @@ function criarConta(username, email, senha, confirmacaoSenha) {
                 if (data.message.includes("Usuário criado com sucesso")) {
 
                     localStorage.setItem('access_token', data.access_token);
-                    window.location.href = '/feed';
+                    window.location.href = 'feed.html';
                 }
             } else {
                 alert(data.error || "Erro ao criar conta!");

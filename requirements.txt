@@ -13,3 +13,4 @@ marshmallow
 SQLAlchemy
 bcrypt
 email-validator
+flask-cors

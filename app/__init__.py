@@ -1,42 +1,51 @@
-# app/_init_:
-from flask import Flask
+from flask import Flask, request
+from flask_cors import CORS  # Importe o CORS
 from app.config import Config
-from app.extensions import db, bcrypt, login_manager, migrate
+from app.extensions import db, bcrypt, migrate
 from app.api import init_app as init_api
-from app.routes import routes
-from app.models import Usuario
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required
 import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
 def create_app():
-    TEMPLATE_DIR = os.path.abspath(
-        os.path.join(BASE_DIR, "frontend/templates"))
-    STATIC_DIR = os.path.abspath(
-        os.path.join(BASE_DIR, "frontend/static"))
-
-    app = Flask(__name__, template_folder=TEMPLATE_DIR,
-                static_folder=STATIC_DIR)
+    # Cria a instância do Flask
+    app = Flask(__name__)
+    
+    # Carrega as configurações
     app.config.from_object(Config)
-    print(f"Template Directory: {TEMPLATE_DIR}")
-    print(f"Static Directory: {STATIC_DIR}")
 
-    JWTManager(app)
+    # Configura o CORS para permitir qualquer origem
+    CORS(app)  # Permite requisições de qualquer origem
+
+    
+    # Inicializa as extensões
+    jwt = JWTManager(app)  # Configura o JWT
+    
+
+    
+    @app.route('/test', methods=['GET'])
+    @jwt_required()
+    def test():
+            return {"message": "Token válido!"}, 200
+
+    @app.before_request
+    def log_request_info():
+        from flask import current_app  
+        print(f"Chave secreta usada para validar o token: {app.config['JWT_SECRET_KEY']}")
+        print(f"Chave secreta usada para validar o token: {current_app.config['JWT_SECRET_KEY']}")
+        print("\n--- Nova Requisição ---")
+        print("Método:", request.method)
+        print("Cabeçalhos:", request.headers)
+        print("Corpo da Requisição:", request.get_data())
+        print("-----------------------\n")
+
     db.init_app(app)
     bcrypt.init_app(app)
-    login_manager.init_app(app)
     migrate.init_app(app, db)
 
-    login_manager.login_view = "homepage"
-
+    # Inicializa a API
     init_api(app)
-
-    app.register_blueprint(routes)
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return Usuario.query.get(int(user_id))
 
     return app

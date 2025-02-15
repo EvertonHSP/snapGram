@@ -11,31 +11,30 @@ routes = Blueprint('routes', __name__)
 def homepage():
 
     form = FormLogin()
-    return render_template('homepage.html', form=form)
+    #return render_template('homepage.html', form=form)
 
 
 @routes.route('/criar-conta', methods=["GET"])
 def criarconta():
 
     form = FormCriarConta()
-    return render_template('criarconta.html', form=form)
+    #return render_template('criarconta.html', form=form)
 
 
 @routes.route('/feed', methods=["GET"])
 def feed():
-    return render_template('feed.html')
+    #return render_template('feed.html')
 
 
 @routes.route('/perfil', methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def perfil():
-    ''' print(f"Headers recebidos: {request.headers}")
-     user_id = get_jwt_identity()
-     print(f"Usuário autenticado: {user_id}")
-     usuario = Usuario.query.get(user_id)
+    print(f"Headers recebidos: {request.headers}")
+    user_id = get_jwt_identity()
+    print(f"Usuário autenticado: {user_id}")
+    usuario = Usuario.query.get(user_id)
 
-     if not usuario:
-         return jsonify({"error": "Usuário não encontrado"}), 404
- '''
-  #   return render_template("perfil.html", usuario=usuario)
-    return render_template("perfil.html")
+    if not usuario:
+        return jsonify({"error": "Usuário não encontrado"}), 404
+
+    #return render_template("perfil.html", usuario=usuario)
