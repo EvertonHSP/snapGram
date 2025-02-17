@@ -12,24 +12,17 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 def create_app():
     # Cria a instância do Flask
     app = Flask(__name__)
-    
+
     # Carrega as configurações
     app.config.from_object(Config)
 
     # Configura o CORS para permitir qualquer origem
     CORS(app)  # Permite requisições de qualquer origem
 
-    
     # Inicializa as extensões
     jwt = JWTManager(app)  # Configura o JWT
-    
 
-    
-    @app.route('/test', methods=['GET'])
-    @jwt_required()
-    def test():
-            return {"message": "Token válido!"}, 200
-
+    '''
     @app.before_request
     def log_request_info():
         from flask import current_app  
@@ -40,7 +33,7 @@ def create_app():
         print("Cabeçalhos:", request.headers)
         print("Corpo da Requisição:", request.get_data())
         print("-----------------------\n")
-
+    '''
     db.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db)

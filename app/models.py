@@ -25,8 +25,10 @@ class Usuario(db.Model, UserMixin):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(255), nullable=False)
-    conteudo = db.Column(db.Text, nullable=False)
+    # Renomeado de titulo para legenda
+    legenda = db.Column(db.String(255), nullable=False)
+    # Renomeado de conteudo para imagem
+    imagem = db.Column(db.String, nullable=False)
     data_criacao = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
     id_usuario = db.Column(db.Integer, db.ForeignKey(
@@ -38,7 +40,7 @@ class Post(db.Model):
         'Curtida', backref='post', lazy=True, cascade="all, delete")
 
     def __repr__(self):
-        return f"<Post {self.id} - {self.titulo}>"
+        return f"<Post {self.id} - {self.legenda}>"
 
 
 class Comentario(db.Model):
@@ -77,8 +79,8 @@ class Curtida(db.Model):
 
 class PostSchema(Schema):
     id = fields.Int()
-    titulo = fields.Str()
-    conteudo = fields.Str()
+    legenda = fields.Str()  # Renomeado de titulo para legenda
+    imagem = fields.Str()  # Renomeado de conteudo para imagem
     data_criacao = fields.DateTime()
     id_usuario = fields.Int()
 
