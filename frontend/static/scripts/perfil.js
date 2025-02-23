@@ -1,11 +1,11 @@
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
-const accessToken = localStorage.getItem("access_token");
+const accessToken = sessionStorage.getItem("access_token");
 
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
-// Função para obter o nome do usuário atual
+// Função para obter o perfil do usuário atual
 const getUserProfile = async () => {
     console.log("Access Token:", accessToken);
     try {
@@ -22,12 +22,70 @@ const getUserProfile = async () => {
 
         const data = await response.json();
         const userName = data.username;  // Acessando o nome de usuário diretamente do JSON
-        document.getElementById('user-name').innerText = userName;  // Preenche o nome do usuário na página
+        const userId = data.id;  // Acessando o ID do usuário
+
+        // Armazena o ID do usuário no sessionStorage
+        sessionStorage.setItem("user_id", userId);
+
+        // Preenche o nome do usuário na página
+        document.getElementById('user-name').innerText = userName;
+
+        // Carrega os posts do usuário
+        loadUserPosts(userId);
 
     } catch (error) {
         console.error("Erro:", error);
         alert("Não foi possível carregar os dados do usuário.");
     }
+};
+
+// Função para carregar os posts do usuário
+const loadUserPosts = async (userId) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/posts?user_id=${userId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,  // Envia o token JWT no cabeçalho
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Erro ao carregar os posts do usuário");
+        }
+
+        const data = await response.json();
+        const posts = data.fotos;  // Acessa a lista de posts
+
+        // Renderiza os posts na página
+        renderPosts(posts);
+
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Não foi possível carregar os posts do usuário.");
+    }
+};
+
+// Função para renderizar os posts na página
+const renderPosts = (posts) => {
+    const photoGrid = document.querySelector('.photo-grid');
+
+    // Limpa o conteúdo atual
+    photoGrid.innerHTML = '';
+
+    // Adiciona cada post ao grid
+    posts.forEach(post => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+
+        photoItem.innerHTML = `
+            <div class="square-image">
+                <img src="${post.imagem_url}" alt="Foto de ${post.usuario.username}">
+            </div>
+            <p class="photo-caption">${post.legenda}</p>
+        `;
+
+        photoGrid.appendChild(photoItem);
+    });
 };
 
 // Chama a função para carregar o perfil
@@ -112,6 +170,11 @@ publicarForm.addEventListener('submit', async (event) => {
 
         // Fecha a tela semitransparente após o envio
         overlay.style.display = 'none';
+
+        // Recarrega os posts do usuário após a publicação
+        const userId = sessionStorage.getItem("user_id");
+        loadUserPosts(userId);
+
     } catch (error) {
         console.error("Erro:", error);
         alert("Não foi possível publicar a foto.");

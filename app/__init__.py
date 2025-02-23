@@ -22,23 +22,14 @@ def create_app():
     # Inicializa as extensões
     jwt = JWTManager(app)  # Configura o JWT
 
-    '''
-    @app.before_request
-    def log_request_info():
-        from flask import current_app  
-        print(f"Chave secreta usada para validar o token: {app.config['JWT_SECRET_KEY']}")
-        print(f"Chave secreta usada para validar o token: {current_app.config['JWT_SECRET_KEY']}")
-        print("\n--- Nova Requisição ---")
-        print("Método:", request.method)
-        print("Cabeçalhos:", request.headers)
-        print("Corpo da Requisição:", request.get_data())
-        print("-----------------------\n")
-    '''
     db.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db)
 
     # Inicializa a API
     init_api(app)
+
+    from app.routesUploadedFile import upload_bp
+    app.register_blueprint(upload_bp)
 
     return app

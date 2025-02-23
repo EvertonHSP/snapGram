@@ -25,7 +25,7 @@ function criarConta(username, email, senha, confirmacaoSenha) {
                 alert(data.message);
                 if (data.message.includes("Usuário criado com sucesso")) {
 
-                    localStorage.setItem('access_token', data.access_token);
+                    sessionStorage.setItem('access_token', data.access_token);
                     window.location.href = 'feed.html';
                 }
             } else {

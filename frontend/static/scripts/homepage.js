@@ -1,3 +1,4 @@
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('login-form');
 
@@ -32,7 +33,7 @@ function loginUser(email, senha) {
         password: senha
     };
 
-    fetch('/api/auth/login', {
+    fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -44,10 +45,10 @@ function loginUser(email, senha) {
         .then(data => {
             if (data.access_token) {
 
-                localStorage.setItem('access_token', data.access_token);
+                sessionStorage.setItem('access_token', data.access_token);
 
                 alert("Login realizado com sucesso!");
-                window.location.href = '/feed.html';
+                window.location.href = 'feed.html';
             } else {
                 alert(data.error || "Erro ao fazer login!");
             }
