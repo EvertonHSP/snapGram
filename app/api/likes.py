@@ -60,3 +60,25 @@ class CurtirPostResource(Resource):
         db.session.commit()
 
         return {"message": "Post curtido com sucesso"}, 201
+
+    @jwt_required()  # Requer autenticação JWT
+    def delete(self, post_id):
+        # Obtém o ID do usuário logado
+        user_id = get_jwt_identity()
+
+        # Verifica se o post existe
+        post = Post.query.get(post_id)
+        if not post:
+            return {"error": "Post não encontrado"}, 404
+
+        # Verifica se o usuário já curtiu o post
+        curtida_existente = Curtida.query.filter_by(
+            id_post=post_id, id_usuario=user_id).first()
+        if not curtida_existente:
+            return {"message": "Você ainda não curtiu este post"}, 400
+
+        # Remove a curtida do banco de dados
+        db.session.delete(curtida_existente)
+        db.session.commit()
+
+        return {"message": "Curtida removida com sucesso"}, 200

@@ -160,5 +160,3 @@ class CreatePostResource(Resource):
             }, 201
         else:
             return {"error": "Tipo de arquivo não permitido"}, 400
-
-# Rota para servir arquivos da pasta uploads

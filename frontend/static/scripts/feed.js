@@ -1,6 +1,7 @@
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
 const accessToken = sessionStorage.getItem("access_token");
 let currentPostId = null; // Variável global para armazenar o postId atual
+let currentUserId = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Token JWT: ", accessToken);
@@ -11,6 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "homepage.html";
         return;
     }
+
+    obterUsuarioAtual();
+
     const perfilButton = document.querySelector(".top-left");
     if (perfilButton) {
         perfilButton.addEventListener("click", function (event) {
@@ -25,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(`${API_BASE_URL}/user/current`, {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${accessToken}`,  // Envia o token JWT no cabeçalho
+                    "Authorization": `Bearer ${accessToken}`,
                 }
             })
                 .then(response => {
@@ -33,22 +37,42 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!response.ok) {
                         throw new Error("Erro de autenticação. Faça login novamente.");
                     }
-                    return response.json();  // Converte a resposta para JSON
+                    return response.json();
                 })
                 .then(data => {
                     console.log("Dados do usuário:", data);
-
-                    // Redireciona para a página de perfil
                     window.location.href = 'perfil.html';
                 })
                 .catch(error => {
                     alert(error.message);
-                    localStorage.removeItem("access_token");  // Remove o token inválido
+                    localStorage.removeItem("access_token");
                     window.location.href = 'homepage.html';
                 });
         });
     }
-    // Função para carregar as fotos do feed
+
+    async function obterUsuarioAtual() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/current`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao obter dados do usuário");
+            }
+
+            const data = await response.json();
+            currentUserId = data.id; // Armazena o ID do usuário logado
+            console.log("ID do usuário logado:", currentUserId);
+        } catch (error) {
+            console.error("Erro ao obter ID do usuário:", error);
+        }
+    }
+
     // Função para carregar as fotos do feed
     async function carregarFotos() {
         try {
@@ -90,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="photo-timestamp">${foto.data_criacao}</p>
                         <div class="comments-section">
                             <button class="like-button" data-post-id="${foto.id}">
-                                <img src="static/style/img/like.png" alt="Curtir">
+                                <img src="static/style/img/nolike.png" alt="Curtir">
                                 <span class="like-count">0</span>
                             </button>
                             <button class="comments-button" data-post-id="${foto.id}">
@@ -106,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 await atualizarContadorCurtidas(foto.id);
             }
 
-            // Adiciona o evento de clique para curtir
+            // Adiciona o evento de clique para curtir no feed
             document.querySelectorAll('.like-button').forEach(button => {
                 button.addEventListener('click', async (event) => {
                     event.stopPropagation();
@@ -141,21 +165,47 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            if (!response.ok) {
-                throw new Error('Erro ao curtir o post');
-            }
-
             const data = await response.json();
-            console.log("Post curtido:", data);
 
-            // Atualiza o contador de curtidas
-            await atualizarContadorCurtidas(postId);
-
+            if (!response.ok) {
+                if (data.message === "Você já curtiu este post") {
+                    console.log("Post já curtido. Removendo curtida...");
+                    await descurtirPost(postId);
+                } else {
+                    throw new Error(data.message || "Erro ao curtir");
+                }
+            } else {
+                console.log("Post curtido:", data);
+                await atualizarContadorCurtidas(postId);
+            }
         } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao curtir o post.');
+            console.error("Erro:", error);
+            alert("Erro ao curtir o post.");
         }
     }
+
+    async function descurtirPost(postId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/post/${postId}/curtir`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao remover curtida");
+            }
+
+            console.log("Curtida removida");
+            await atualizarContadorCurtidas(postId);
+        } catch (error) {
+            console.error("Erro:", error);
+            alert("Erro ao remover a curtida.");
+        }
+    }
+
 
     // Função para atualizar o contador de curtidas
     async function atualizarContadorCurtidas(postId) {
@@ -178,17 +228,56 @@ document.addEventListener("DOMContentLoaded", function () {
             // Acessa o número de curtidas corretamente
             const likeCount = data.total_curtidas;
 
-            // Atualiza o contador de curtidas no botão
-            const likeButton = document.querySelector(`.like-button[data-post-id="${postId}"] .like-count`);
-            if (likeButton) {
-                likeButton.innerText = likeCount;
-            } else {
-                console.error('Botão de curtir não encontrado para o post ID:', postId);
+            // Verifica se o usuário atual curtiu o post
+            const usuarioCurtiu = await verificarSeUsuarioCurtiu(postId);
+
+            // Atualiza o contador de curtidas no feed
+            const likeButtonFeed = document.querySelector(`.like-button[data-post-id="${postId}"]`);
+            if (likeButtonFeed) {
+                const likeImageFeed = likeButtonFeed.querySelector('img');
+                const likeCountFeed = likeButtonFeed.querySelector('.like-count');
+
+                likeImageFeed.src = usuarioCurtiu ? "static/style/img/like.png" : "static/style/img/nolike.png";
+                likeCountFeed.innerText = likeCount;
+            }
+
+            // Atualiza o contador de curtidas na tela semitransparente
+            const likeButtonOverlay = document.querySelector(`#overlay-like-button`);
+            if (likeButtonOverlay && currentPostId === postId) {
+                const likeImageOverlay = likeButtonOverlay.querySelector('img');
+                const likeCountOverlay = likeButtonOverlay.querySelector('.like-count');
+
+                likeImageOverlay.src = usuarioCurtiu ? "static/style/img/like.png" : "static/style/img/nolike.png";
+                likeCountOverlay.innerText = likeCount;
             }
 
         } catch (error) {
             console.error('Erro:', error);
-            alert('Erro ao atualizar o contador de curtidas.');
+        }
+    }
+
+    async function verificarSeUsuarioCurtiu(postId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/post/${postId}/get_like`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao verificar curtida');
+            }
+
+            const data = await response.json();
+
+            // Verifica se o usuário atual está na lista de usuários que curtiram o post
+            const usuarioCurtiu = data.usuarios_curtiu.some(usuario => usuario.id === currentUserId);
+            return usuarioCurtiu;
+        } catch (error) {
+            console.error('Erro ao verificar se o usuário curtiu:', error);
+            return false;
         }
     }
 
@@ -252,6 +341,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentsList.appendChild(commentItem);
             });
 
+            // Adiciona o evento de clique para curtir na tela semitransparente
+            const likeButtonOverlay = document.getElementById('overlay-like-button');
+            if (likeButtonOverlay) {
+                // Remove eventos de clique anteriores para evitar acumulação
+                likeButtonOverlay.replaceWith(likeButtonOverlay.cloneNode(true));
+                const newLikeButtonOverlay = document.getElementById('overlay-like-button');
+
+                // Define o postId dinamicamente
+                newLikeButtonOverlay.setAttribute('data-post-id', postId);
+
+                // Adiciona o evento de clique
+                newLikeButtonOverlay.addEventListener('click', async (event) => {
+                    event.stopPropagation();
+                    await curtirPost(postId);
+                });
+            }
+
             // Exibe a tela semitransparente
             document.getElementById('overlay').style.display = 'flex';
 
@@ -313,14 +419,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Atualiza o contador de curtidas a cada minuto
-    // Atualiza o contador de curtidas a cada minuto
     setInterval(async () => {
         const posts = document.querySelectorAll('.photo-info');
         for (const post of posts) {
             const postId = post.getAttribute('data-post-id');
             await atualizarContadorCurtidas(postId);
         }
-    }, 120000); // 60000 milissegundos = 1 minuto
+    }, 60000); // 60000 milissegundos = 1 minuto
 
     // Carrega as fotos quando a página é carregada
     carregarFotos();

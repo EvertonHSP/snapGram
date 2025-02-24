@@ -1,5 +1,7 @@
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
 const accessToken = sessionStorage.getItem("access_token");
+let currentPostId = null; // Variável global para armazenar o postId atual
+let currentUserId = null; // Variável global para armazenar o ID do usuário logado
 
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
@@ -12,7 +14,7 @@ const getUserProfile = async () => {
         const response = await fetch(`${API_BASE_URL}/user/current`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${accessToken}`,  // Envia o token JWT no cabeçalho
+                "Authorization": `Bearer ${accessToken}`,
             }
         });
 
@@ -21,11 +23,12 @@ const getUserProfile = async () => {
         }
 
         const data = await response.json();
-        const userName = data.username;  // Acessando o nome de usuário diretamente do JSON
-        const userId = data.id;  // Acessando o ID do usuário
+        const userName = data.username;
+        const userId = data.id;
 
         // Armazena o ID do usuário no sessionStorage
         sessionStorage.setItem("user_id", userId);
+        currentUserId = userId; // Atualiza a variável global
 
         // Preenche o nome do usuário na página
         document.getElementById('user-name').innerText = userName;
@@ -45,7 +48,7 @@ const loadUserPosts = async (userId) => {
         const response = await fetch(`${API_BASE_URL}/posts?user_id=${userId}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${accessToken}`,  // Envia o token JWT no cabeçalho
+                "Authorization": `Bearer ${accessToken}`,
             }
         });
 
@@ -54,7 +57,7 @@ const loadUserPosts = async (userId) => {
         }
 
         const data = await response.json();
-        const posts = data.fotos;  // Acessa a lista de posts
+        const posts = data.fotos;
 
         // Renderiza os posts na página
         renderPosts(posts);
@@ -78,18 +81,93 @@ const renderPosts = (posts) => {
         photoItem.className = 'photo-item';
 
         photoItem.innerHTML = `
-            <div class="square-image">
+            <div class="square-image" data-post-id="${post.id}">
                 <img src="${post.imagem_url}" alt="Foto de ${post.usuario.username}">
             </div>
-            <p class="photo-caption">${post.legenda}</p>
         `;
 
         photoGrid.appendChild(photoItem);
     });
+
+    // Adiciona o evento de clique para abrir a tela de comentários
+    document.querySelectorAll('.square-image').forEach(image => {
+        image.addEventListener('click', (event) => {
+            const postId = image.getAttribute('data-post-id');
+            abrirTelaComentarios(postId);
+        });
+    });
 };
 
-// Chama a função para carregar o perfil
-getUserProfile();
+// Função para abrir a tela de comentários
+const abrirTelaComentarios = async (postId) => {
+    currentPostId = postId;
+    try {
+        // Carrega os dados do post
+        const postResponse = await fetch(`${API_BASE_URL}/post/${postId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Accept": "application/json"
+            }
+        });
+
+        if (!postResponse.ok) {
+            throw new Error('Erro ao carregar os dados do post');
+        }
+
+        const postData = await postResponse.json();
+        console.log("Dados do post:", postData);
+
+        // Preenche as informações do post na tela semitransparente
+        document.getElementById('post-profile-image').src = "static/style/img/fotoPerfil.png";
+        document.getElementById('post-username').innerText = postData.usuario.username;
+        document.getElementById('post-image').src = postData.imagem_url;
+        document.getElementById('post-caption').innerText = postData.legenda;
+        document.getElementById('post-timestamp').innerText = postData.data_criacao;
+
+        // Carrega os comentários do post
+        const commentsResponse = await fetch(`${API_BASE_URL}/post/${postId}/comentarios`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Accept": "application/json"
+            }
+        });
+
+        if (!commentsResponse.ok) {
+            throw new Error('Erro ao carregar os comentários');
+        }
+
+        const commentsData = await commentsResponse.json();
+        console.log("Comentários:", commentsData);
+
+        // Renderiza os comentários na tela semitransparente
+        const commentsList = document.getElementById('comments-list');
+        commentsList.innerHTML = '';
+
+        commentsData.comentarios.forEach(comentario => {
+            const commentItem = document.createElement('div');
+            commentItem.className = 'comment-item';
+            commentItem.innerHTML = `
+                <p><strong>${comentario.usuario.username}</strong>: ${comentario.conteudo}</p>
+                <p class="comment-timestamp">${comentario.data_criacao}</p>
+            `;
+            commentsList.appendChild(commentItem);
+        });
+
+        // Exibe a tela semitransparente
+        document.getElementById('overlay-comentarios').style.display = 'flex';
+
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao carregar os dados do post ou comentários.');
+    }
+};
+
+// Fechar a tela de comentários
+document.getElementById('close-overlay-comentarios').addEventListener('click', () => {
+    document.getElementById('overlay-comentarios').style.display = 'none';
+});
 
 // Configura o evento de mudança para o input de arquivo
 const fileInput = document.getElementById('foto');
@@ -113,25 +191,25 @@ fileInput.addEventListener('change', (event) => {
     }
 });
 
-// Função para mostrar a tela semitransparente
+// Função para mostrar a tela semitransparente de publicação
 const overlay = document.getElementById('overlay');
 const publicarBtn = document.getElementById('publicar-btn');
 const fecharOverlayBtn = document.getElementById('fechar-overlay');
 
 // Mostrar a tela semitransparente ao clicar no botão "Publicar"
 publicarBtn.addEventListener('click', () => {
-    overlay.style.display = 'flex';  // Exibe a tela semitransparente
+    overlay.style.display = 'flex';
 });
 
 // Fechar a tela semitransparente ao clicar no botão "Fechar"
 fecharOverlayBtn.addEventListener('click', () => {
-    overlay.style.display = 'none';  // Oculta a tela semitransparente
+    overlay.style.display = 'none';
 });
 
 // Lógica para enviar a foto e a legenda para o backend
 const publicarForm = document.getElementById('publicar-form');
 publicarForm.addEventListener('submit', async (event) => {
-    event.preventDefault();  // Impede o comportamento padrão do formulário
+    event.preventDefault();
 
     const legenda = document.getElementById('legenda').value;
     const foto = document.getElementById('foto').files[0];
@@ -150,10 +228,9 @@ publicarForm.addEventListener('submit', async (event) => {
         const response = await fetch(`${API_BASE_URL}/posts/create`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${accessToken}`,  // Envia o token JWT no cabeçalho
-                // NÃO defina "Content-Type" manualmente, o navegador fará isso automaticamente
+                "Authorization": `Bearer ${accessToken}`,
             },
-            body: formData,  // Envia o FormData
+            body: formData,
         });
 
         if (!response.ok) {
@@ -180,3 +257,6 @@ publicarForm.addEventListener('submit', async (event) => {
         alert("Não foi possível publicar a foto.");
     }
 });
+
+// Chama a função para carregar o perfil
+getUserProfile();
