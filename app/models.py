@@ -1,3 +1,4 @@
+from sqlalchemy import UniqueConstraint
 from datetime import datetime
 from flask_login import UserMixin
 from marshmallow import Schema, fields
@@ -59,7 +60,7 @@ class Comentario(db.Model):
 
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    imagem = db.Column(db.String, default='default.jpg')
+    imagem = db.Column(db.String, nullable=False)
     data_criacao = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow())
     id_usuario = db.Column(db.Integer, db.ForeignKey(
@@ -72,6 +73,9 @@ class Curtida(db.Model):
         'usuario.id', ondelete="CASCADE"), nullable=False)
     id_post = db.Column(db.Integer, db.ForeignKey(
         'post.id', ondelete="CASCADE"), nullable=False)
+    __table_args__ = (
+        UniqueConstraint('id_post', 'id_usuario', name='unique_post_usuario'),
+    )
 
     def __repr__(self):
         return f"<Curtida {self.id}>"

@@ -223,21 +223,15 @@ h2 {
 
 
 
-
-
-
-
 /* Estilo da tela semitransparente */
 .overlay-comentarios {
     display: none;
-    /* Oculta a tela inicialmente */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
-    /* Fundo preto semitransparente */
     z-index: 1000;
     justify-content: center;
     align-items: center;
@@ -254,37 +248,27 @@ h2 {
     overflow-y: auto;
 }
 
-
 /* Personalizando a barra de rolagem */
 .overlayContent::-webkit-scrollbar {
     width: 8px;
-    /* Largura da barra de rolagem */
 }
 
 .overlayContent::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.2);
-    /* Cor do fundo da barra de rolagem */
     border-radius: 10px;
 }
 
 .overlayContent::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.5);
-    /* Cor da parte deslizante da barra */
     border-radius: 10px;
 }
 
-/* Quando o mouse passa sobre a parte deslizante */
 .overlayContent::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 1);
-    /* Cor mais escura quando hover */
 }
-
-
-
 
 #sair_cmnt {
     margin-bottom: 40px;
-    /* Garante espaço abaixo do post */
     padding: 10px;
 }
 
@@ -295,7 +279,18 @@ h2 {
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 10px;
+}
 
+/* Ajuste para a imagem dentro de image-comentarios */
+.image-comentarios img {
+    max-width: 100%;
+    /* Limita a largura da imagem ao tamanho do container */
+    height: auto;
+    /* Mantém a proporção da imagem */
+    border-radius: 10px;
+    display: block;
+    /* Remove espaços extras abaixo da imagem */
+    margin-bottom: 15px;
 }
 
 /* Seção 2: Área de comentários */
@@ -309,7 +304,6 @@ h2 {
 #comment-input {
     color: #fff !important;
     background-color: rgba(255, 255, 255, 0.5);
-
     width: 100%;
     height: 100px;
     padding: 10px;
@@ -322,9 +316,7 @@ h2 {
 #comment-input::placeholder {
     color: white;
     opacity: 1;
-    /* Garante que a cor branca fique visível */
 }
-
 
 #submit-comment {
     width: 100%;
@@ -332,11 +324,9 @@ h2 {
     background-color: rgba(73, 83, 92, 0.7);
     border: 1px solid #ccc;
     color: #fff;
-    /* Deixa a letra branca */
     border-radius: 5px;
     cursor: pointer;
 }
-
 
 #submit-comment:hover {
     background-color: rgba(73, 83, 92, 1);
@@ -360,43 +350,23 @@ h2 {
 }
 
 /* Botão para fechar a tela semitransparente */
-#close-overlay {
-    width: 30%;
-    padding: 10px;
-    background-color: rgba(73, 83, 92, 0.7);
-    border: 1px solid #ccc;
-    color: #fff;
-    /* Deixa a letra branca */
-    border-radius: 5px;
-    cursor: pointer;
-    float: right;
-    /* Alinha o botão à direita */
-}
-
-#close-overlay:hover {
-    background-color: rgba(73, 83, 92, 1);
-}
 
 
 /* Personalizando a barra de rolagem */
 #comments-list::-webkit-scrollbar {
     width: 8px;
-    /* Largura da barra de rolagem */
 }
 
 #comments-list::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.2);
-    /* Cor do fundo da barra de rolagem */
     border-radius: 10px;
 }
 
 #comments-list::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.5);
-    /* Cor da parte deslizante da barra */
     border-radius: 10px;
 }
 
-/* Quando o mouse passa sobre a parte deslizante */
 #comments-list::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 1);
 }
@@ -406,7 +376,7 @@ h2 {
     align-items: center;
 }
 
-.post-profile-image {
+.profile-image {
     width: 4%;
     height: 4%;
     border-radius: 50%;
@@ -420,4 +390,139 @@ h2 {
     font-weight: bold;
     margin: 0;
     text-align: left;
+}
+
+.like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.like-count {
+    font-size: 14px;
+    color: #333;
+}
+
+#sair_cmnt {
+    display: flex;
+    justify-content: space-between;
+    /* Alinha os botões nas extremidades */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding: 10px;
+    /* Adiciona um pouco de espaço ao redor */
+}
+
+#delete-post {
+    background-color: #ff4d4d;
+    /* Cor vermelha para o botão de exclusão */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#delete-post:hover {
+    background-color: #cc0000;
+    /* Cor mais escura ao passar o mouse */
+}
+
+#close-overlay-comentarios {
+    background-color: rgba(73, 83, 92, 0.7);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#close-overlay-comentarios:hover {
+    background-color: rgba(73, 83, 92, 1);
+}
+
+/* Estilos para o botão "Trocar Foto de Perfil" */
+/* Estilos para o botão "Trocar Foto de Perfil" */
+#trocar-foto-btn {
+    background-color: #49535C;
+    color: white;
+    border: none;
+    padding: 0.5% 1%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0.5%;
+    font-size: 0.9vw;
+}
+
+#trocar-foto-btn:hover {
+    background-color: #3A4147;
+}
+
+/* Estilos para a tela semitransparente de troca de foto de perfil */
+#overlay-foto-perfil .overlay-content {
+    height: 80%;
+    /* Altura menor para a tela de troca de foto */
+    width: 30%;
+    /* Largura menor */
+    margin-top: 0%;
+    /* Move a tela mais para cima */
+    overflow-y: auto;
+    /* Adiciona barra de rolagem */
+}
+
+#overlay-foto-perfil .upload-btn-container {
+    margin-top: 5%;
+    /* Ajuste do espaçamento */
+}
+
+#overlay-foto-perfil #fechar-overlay-foto-perfil {
+    margin-top: 5%;
+    /* Ajuste do espaçamento */
+}
+
+.file-selected-image-perfil {
+    height: 75%;
+    /* Altura fixa para a miniatura */
+    width: 75%;
+    /* Largura fixa para a miniatura */
+    display: none;
+    position: relative;
+    overflow: hidden;
+    margin: auto;
+    margin-top: 3%;
+}
+
+#thumbnail-perfil {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Garante que a imagem cubra o espaço sem distorcer */
+}
+
+/* Estilo da barra de rolagem transparente */
+#overlay-foto-perfil .overlay-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#overlay-foto-perfil .overlay-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    /* Fundo transparente */
+    border-radius: 10px;
+}
+
+#overlay-foto-perfil .overlay-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    /* Barra semitransparente */
+    border-radius: 10px;
+}
+
+#overlay-foto-perfil .overlay-content::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Barra mais visível ao passar o mouse */
 }

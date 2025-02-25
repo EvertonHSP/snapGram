@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 import os
 from flask import request, Flask, url_for
 from werkzeug.utils import secure_filename
@@ -55,11 +56,19 @@ class CurtirPostResource(Resource):
         # Cria uma nova curtida
         nova_curtida = Curtida(id_usuario=user_id, id_post=post_id)
 
-        # Adiciona a nova curtida ao banco de dados
-        db.session.add(nova_curtida)
-        db.session.commit()
-
-        return {"message": "Post curtido com sucesso"}, 201
+        try:
+            # Adiciona a nova curtida ao banco de dados
+            db.session.add(nova_curtida)
+            db.session.commit()
+            return {"message": "Post curtido com sucesso"}, 201
+        except IntegrityError:
+            # Em caso de violação de restrição única, faz rollback e retorna erro
+            db.session.rollback()
+            return {"error": "Erro ao curtir o post: você já curtiu este post."}, 400
+        except Exception as e:
+            # Captura outras exceções inesperadas
+            db.session.rollback()
+            return {"error": f"Erro inesperado: {str(e)}"}, 500
 
     @jwt_required()  # Requer autenticação JWT
     def delete(self, post_id):
@@ -77,8 +86,12 @@ class CurtirPostResource(Resource):
         if not curtida_existente:
             return {"message": "Você ainda não curtiu este post"}, 400
 
-        # Remove a curtida do banco de dados
-        db.session.delete(curtida_existente)
-        db.session.commit()
-
-        return {"message": "Curtida removida com sucesso"}, 200
+        try:
+            # Remove a curtida do banco de dados
+            db.session.delete(curtida_existente)
+            db.session.commit()
+            return {"message": "Curtida removida com sucesso"}, 200
+        except Exception as e:
+            # Captura exceções inesperadas
+            db.session.rollback()
+            return {"error": f"Erro inesperado: {str(e)}"}, 500

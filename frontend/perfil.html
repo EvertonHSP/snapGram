@@ -15,9 +15,32 @@
 
     <div class="profile-container">
         <div class="profile-picture">
-            <img src="static/style/img/fotoPerfil.png" alt="Foto de Perfil">
+            <img src="static/style/img/fotoPerfil.png" alt="Foto de Perfil" id="foto-perfil-usuario">
         </div>
         <h2><span id="user-name">Carregando...</span></h2>
+        <!-- Botão "Trocar Foto de Perfil" -->
+        <div class="form-container">
+            <button id="trocar-foto-btn" class="upload-btn">Trocar Foto de Perfil</button>
+        </div>
+    </div>
+
+    <!-- Tela semitransparente para troca de foto de perfil (inicialmente oculta) -->
+    <div id="overlay-foto-perfil" class="overlay">
+        <div class="overlay-content">
+            <form id="trocar-foto-form" method="post" enctype="multipart/form-data">
+                <div class="upload-btn-container">
+                    <label for="foto-perfil" class="upload-btn">Escolher Foto</label>
+                    <input type="file" name="foto-perfil" accept="image/*" id="foto-perfil" style="display: none;">
+                    <div id="file-selected-image-perfil" class="file-selected-image-perfil">
+                        <img id="thumbnail-perfil" src="" alt="Miniatura da foto">
+                    </div>
+                </div>
+                <div class="upload-btn-container">
+                    <button type="submit" class="upload-btn">Salvar</button>
+                </div>
+            </form>
+            <button id="fechar-overlay-foto-perfil" class="upload-btn">Cancelar</button>
+        </div>
     </div>
 
     <!-- Botão "Publicar" -->
@@ -49,6 +72,9 @@
     <div id="overlay-comentarios" class="overlay overlay-comentarios">
         <div class="overlayContent">
             <div id="sair_cmnt">
+                <!-- Botão "Excluir Post" na extrema esquerda -->
+                <button id="delete-post" class="upload-btn delete-btn">Excluir Post</button>
+                <!-- Botão "Fechar" na extrema direita -->
                 <button id="close-overlay-comentarios" class="upload-btn">Fechar</button>
             </div>
             <!-- Seção 1: Informações do post -->
@@ -57,14 +83,14 @@
                     <img id="post-profile-image" src="" alt="Foto de perfil" class="profile-image">
                     <p id="post-username" class="photo-username"></p>
                 </div>
-                <div class="square-image">
+                <p id="post-caption" class="photo-caption"></p>
+                <div class="image-comentarios">
                     <img id="post-image" src="" alt="Foto do post">
                 </div>
-                <p id="post-caption" class="photo-caption"></p>
                 <p id="post-timestamp" class="photo-timestamp"></p>
-                <div class="comments-section">
-                    <button class="like-button" data-post-id="${foto.id}">
-                        <img src="static/style/img/like.png" alt="Curtir">
+                <div class="like-section">
+                    <button class="like-button">
+                        <img src="static/style/img/nolike.png" alt="Curtir">
                         <span class="like-count">0</span>
                     </button>
                 </div>
@@ -83,17 +109,13 @@
         </div>
     </div>
 
-    {% if fotos %}
+
     <div class="photo-grid">
-        {% for foto in fotos %}
         <div class="photo-item">
-            <div class="square-image" data-post-id="{{ foto.id }}">
-                <img src="static/fotos_posts/{{ foto.imagem }}" alt="Foto de {{ usuario.username }}">
-            </div>
+
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
+
 
     <!-- Scripts -->
     <script src="static/scripts/perfil.js"></script>

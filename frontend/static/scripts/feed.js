@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Função para carregar as fotos do feed
+    // Função para carregar as fotos do feed
     async function carregarFotos() {
         try {
             const response = await fetch(`${API_BASE_URL}/posts`, {
@@ -101,28 +102,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 const photoItem = document.createElement('li');
                 photoItem.className = 'photo-item';
 
+                // Verifica se a foto de perfil do usuário está disponível
+                const fotoPerfilUrl = foto.usuario.foto_perfil_url || "static/style/img/fotoPerfil.png";
+
                 photoItem.innerHTML = `
-                    <div class="photo-info" data-post-id="${foto.id}">
-                        <div class="user-info">
-                            <img src="static/style/img/fotoPerfil.png" alt="Foto de perfil" class="profile-image">
-                            <p class="photo-username">${foto.usuario.username} (ID: ${foto.usuario.id})</p>
-                        </div>
-                        <p class="photo-caption">${foto.legenda}</p>
-                        <div class="square-image">
-                            <img src="${foto.imagem_url}" alt="Foto de ${foto.usuario.username}">
-                        </div>
-                        <p class="photo-timestamp">${foto.data_criacao}</p>
-                        <div class="comments-section">
-                            <button class="like-button" data-post-id="${foto.id}">
-                                <img src="static/style/img/nolike.png" alt="Curtir">
-                                <span class="like-count">0</span>
-                            </button>
-                            <button class="comments-button" data-post-id="${foto.id}">
-                                Comentários
-                            </button>
-                        </div>
+                <div class="photo-info" data-post-id="${foto.id}">
+                    <div class="user-info">
+                        <img src="${fotoPerfilUrl}" alt="Foto de perfil" class="profile-image">
+                        <p class="photo-username">${foto.usuario.username} (ID: ${foto.usuario.id})</p>
                     </div>
-                `;
+                    <p class="photo-caption">${foto.legenda}</p>
+                    <div class="square-image">
+                        <img src="${foto.imagem_url}" alt="Foto de ${foto.usuario.username}">
+                    </div>
+                    <p class="photo-timestamp">${foto.data_criacao}</p>
+                    <div class="comments-section">
+                        <button class="like-button" data-post-id="${foto.id}">
+                            <img src="static/style/img/nolike.png" alt="Curtir">
+                            <span class="like-count">0</span>
+                        </button>
+                        <button class="comments-button" data-post-id="${foto.id}">
+                            Comentários
+                        </button>
+                    </div>
+                </div>
+            `;
 
                 photoGrid.appendChild(photoItem);
 
@@ -301,8 +305,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const postData = await postResponse.json();
             console.log("Dados do post:", postData);
 
-            // Preenche as informações do post na tela semitransparente
-            document.getElementById('post-profile-image').src = "static/style/img/fotoPerfil.png";
+            const fotoPerfilUrl = postData.usuario.foto_perfil_url || "static/style/img/fotoPerfil.png";
+
+            document.getElementById('post-profile-image').src = fotoPerfilUrl;
             document.getElementById('post-username').innerText = postData.usuario.username;
             document.getElementById('post-image').src = postData.imagem_url;
             document.getElementById('post-caption').innerText = postData.legenda;
