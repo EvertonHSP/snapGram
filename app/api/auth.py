@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_login import logout_user
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required  # noqa: E501
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt, decode_token  # noqa: E501
 from app import bcrypt
 from app.models import Usuario, TokenBlacklist
 from app.extensions import db
@@ -54,32 +53,33 @@ class LogoutResource(Resource):
     def post(self):
         usuario_id = get_jwt_identity()
 
-        existing_token = TokenBlacklist.query.filter_by(
-            user_id=usuario_id).first()
+        raw_token = get_jwt()["jti"]  
+
+        
+        existing_token = TokenBlacklist.query.filter_by(token=raw_token).first()
         if existing_token:
             db.session.delete(existing_token)
 
-        blacklisted_token = TokenBlacklist(
-            token=str(get_jwt_identity()), user_id=usuario_id)
+        
+        blacklisted_token = TokenBlacklist(token=raw_token, user_id=usuario_id)
         db.session.add(blacklisted_token)
         db.session.commit()
 
-        logout_user()
         return {"message": "Logout bem-sucedido"}, 200
+
 
 
 def generate_unique_token(usuario_id):
     from flask import current_app  
-    print(f"Chave secreta usada para gerar o token: {current_app.config['JWT_SECRET_KEY']}")
+    
     while True:
-
+        
         token = create_access_token(identity=str(usuario_id))
 
-        print(f"Token gerado: {token}")
-
-        if TokenBlacklist.query.filter_by(token=token).first():
-
-            continue
+        decoded_token = decode_token(token)
+        jti = decoded_token["jti"]  
+        
+        if TokenBlacklist.query.filter_by(token=jti).first():
+            continue  
         else:
-
-            return token
+            return token  

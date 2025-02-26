@@ -1,12 +1,12 @@
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
 const accessToken = sessionStorage.getItem("access_token");
-let currentPostId = null; // Variável global para armazenar o postId atual
+let currentPostId = null; 
 let currentUserId = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Token JWT: ", accessToken);
 
-    // Verifica se o usuário está autenticado
+    
     if (!accessToken) {
         alert("Você precisa estar logado para acessar o feed.");
         window.location.href = "homepage.html";
@@ -51,6 +51,60 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+
+
+
+
+    const sairButton = document.querySelector(".top-right");
+    if (sairButton) {
+        sairButton.addEventListener("click", function (event) {
+            event.preventDefault(); 
+
+            const accessToken = sessionStorage.getItem("access_token");
+
+            if (!accessToken) {
+                
+                window.location.href = "homepage.html";
+                return;
+            }
+
+            
+            fetch(`${API_BASE_URL}/auth/logout`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                }
+            })
+            .then(response => {
+                console.log("Status da resposta:", response.status);
+
+                if (!response.ok) {
+                    throw new Error("Erro ao sair da conta, tente novamente.");
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                console.log("Dados do usuário:", data);
+
+                
+                sessionStorage.removeItem("access_token");
+
+                
+                window.location.href = "homepage.html";
+            })
+            .catch(error => {
+                console.error("Erro durante o logout:", error);
+                alert(error.message);
+            });
+        });
+    }
+
+
+
+
+
+
     async function obterUsuarioAtual() {
         try {
             const response = await fetch(`${API_BASE_URL}/user/current`, {
@@ -66,15 +120,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            currentUserId = data.id; // Armazena o ID do usuário logado
+            currentUserId = data.id; 
             console.log("ID do usuário logado:", currentUserId);
         } catch (error) {
             console.error("Erro ao obter ID do usuário:", error);
         }
     }
 
-    // Função para carregar as fotos do feed
-    // Função para carregar as fotos do feed
+
     async function carregarFotos() {
         try {
             const response = await fetch(`${API_BASE_URL}/posts`, {
@@ -94,15 +147,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const fotos = data.fotos;
             const photoGrid = document.getElementById('photo-grid');
 
-            // Limpa o grid antes de adicionar as novas fotos
+            
             photoGrid.innerHTML = '';
 
-            // Para cada foto, carrega o número de curtidas
+            
             for (const foto of fotos) {
                 const photoItem = document.createElement('li');
                 photoItem.className = 'photo-item';
 
-                // Verifica se a foto de perfil do usuário está disponível
+                
                 const fotoPerfilUrl = foto.usuario.foto_perfil_url || "static/style/img/fotoPerfil.png";
 
                 photoItem.innerHTML = `
@@ -130,11 +183,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 photoGrid.appendChild(photoItem);
 
-                // Carrega o número de curtidas para este post
+                
                 await atualizarContadorCurtidas(foto.id);
             }
 
-            // Adiciona o evento de clique para curtir no feed
+           
             document.querySelectorAll('.like-button').forEach(button => {
                 button.addEventListener('click', async (event) => {
                     event.stopPropagation();
@@ -143,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
 
-            // Adiciona o evento de clique para abrir a tela de comentários
+            
             document.querySelectorAll('.comments-button').forEach(button => {
                 button.addEventListener('click', (event) => {
                     event.stopPropagation();
@@ -158,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Função para curtir um post
+   
     async function curtirPost(postId) {
         try {
             const response = await fetch(`${API_BASE_URL}/post/${postId}/curtir`, {
@@ -211,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Função para atualizar o contador de curtidas
+    
     async function atualizarContadorCurtidas(postId) {
         try {
             const response = await fetch(`${API_BASE_URL}/post/${postId}/get_like`, {
@@ -276,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const data = await response.json();
 
-            // Verifica se o usuário atual está na lista de usuários que curtiram o post
+            
             const usuarioCurtiu = data.usuarios_curtiu.some(usuario => usuario.id === currentUserId);
             return usuarioCurtiu;
         } catch (error) {
@@ -285,11 +338,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Função para abrir a tela de comentários
+    
     async function abrirTelaComentarios(postId) {
         currentPostId = postId;
         try {
-            // Carrega os dados do post
+            
             const postResponse = await fetch(`${API_BASE_URL}/post/${postId}`, {
                 method: "GET",
                 headers: {
@@ -313,10 +366,10 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('post-caption').innerText = postData.legenda;
             document.getElementById('post-timestamp').innerText = postData.data_criacao;
 
-            // Atualiza o contador de curtidas
+            
             await atualizarContadorCurtidas(postId);
 
-            // Carrega os comentários do post
+            
             const commentsResponse = await fetch(`${API_BASE_URL}/post/${postId}/comentarios`, {
                 method: "GET",
                 headers: {
@@ -332,7 +385,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const commentsData = await commentsResponse.json();
             console.log("Comentários:", commentsData);
 
-            // Renderiza os comentários na tela semitransparente
+            
             const commentsList = document.getElementById('comments-list');
             commentsList.innerHTML = '';
 
@@ -346,24 +399,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentsList.appendChild(commentItem);
             });
 
-            // Adiciona o evento de clique para curtir na tela semitransparente
+            
             const likeButtonOverlay = document.getElementById('overlay-like-button');
             if (likeButtonOverlay) {
-                // Remove eventos de clique anteriores para evitar acumulação
+                
                 likeButtonOverlay.replaceWith(likeButtonOverlay.cloneNode(true));
                 const newLikeButtonOverlay = document.getElementById('overlay-like-button');
 
-                // Define o postId dinamicamente
+                
                 newLikeButtonOverlay.setAttribute('data-post-id', postId);
 
-                // Adiciona o evento de clique
+                
                 newLikeButtonOverlay.addEventListener('click', async (event) => {
                     event.stopPropagation();
                     await curtirPost(postId);
                 });
             }
 
-            // Exibe a tela semitransparente
+            
             document.getElementById('overlay').style.display = 'flex';
 
         } catch (error) {
@@ -372,12 +425,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Função para fechar a tela semitransparente
+    
     document.getElementById('close-overlay').addEventListener('click', () => {
         document.getElementById('overlay').style.display = 'none';
     });
 
-    // Função para enviar um comentário
+    
     document.getElementById('submit-comment').addEventListener('click', async () => {
         if (!currentPostId) {
             alert("Nenhum post selecionado.");
@@ -423,15 +476,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Atualiza o contador de curtidas a cada minuto
+    
     setInterval(async () => {
         const posts = document.querySelectorAll('.photo-info');
         for (const post of posts) {
             const postId = post.getAttribute('data-post-id');
             await atualizarContadorCurtidas(postId);
         }
-    }, 60000); // 60000 milissegundos = 1 minuto
+    }, 60000); 
 
-    // Carrega as fotos quando a página é carregada
+    
     carregarFotos();
 });

@@ -1,15 +1,14 @@
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
 const accessToken = sessionStorage.getItem("access_token");
-let currentPostId = null; // Variável global para armazenar o postId atual
-let currentUserId = null; // Variável global para armazenar o ID do usuário logado
-let isLiking = false; // Variável de controle
+let currentPostId = null; 
+let currentUserId = null; 
+let isLiking = false; 
 
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
-// Função para obter o perfil do usuário atual
-// Função para obter o perfil do usuário atual
+
 const getUserProfile = async () => {
     console.log("Access Token:", accessToken);
     try {
@@ -21,6 +20,7 @@ const getUserProfile = async () => {
         });
 
         if (!response.ok) {
+            window.location.href = "homepage.html";
             throw new Error("Erro ao buscar dados do usuário");
         }
 
@@ -28,17 +28,11 @@ const getUserProfile = async () => {
         const userName = data.username;
         const userId = data.id;
 
-        // Armazena o ID do usuário no sessionStorage
         sessionStorage.setItem("user_id", userId);
-        currentUserId = userId; // Atualiza a variável global
-
-        // Preenche o nome do usuário na página
+        currentUserId = userId; 
         document.getElementById('user-name').innerText = userName;
 
-        // Carrega a foto de perfil do usuário
         loadProfilePicture(userId);
-
-        // Carrega os posts do usuário
         loadUserPosts(userId);
 
     } catch (error) {
@@ -47,7 +41,7 @@ const getUserProfile = async () => {
     }
 };
 
-// Função para carregar os posts do usuário
+
 const loadUserPosts = async (userId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/posts?user_id=${userId}`, {
@@ -64,7 +58,6 @@ const loadUserPosts = async (userId) => {
         const data = await response.json();
         const posts = data.fotos;
 
-        // Renderiza os posts na página
         renderPosts(posts);
 
     } catch (error) {
@@ -73,7 +66,7 @@ const loadUserPosts = async (userId) => {
     }
 };
 
-// Função para carregar a foto de perfil do usuário
+
 const loadProfilePicture = async (usuario_id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/foto_perfil/${usuario_id}`, {
@@ -89,29 +82,28 @@ const loadProfilePicture = async (usuario_id) => {
 
         const data = await response.json();
 
-        // Se a URL da foto de perfil estiver disponível, atualiza a imagem
+        
         if (data.foto_perfil_url) {
             document.getElementById('foto-perfil-usuario').src = data.foto_perfil_url;
         } else {
-            // Caso contrário, mantém a imagem padrão
             document.getElementById('foto-perfil-usuario').src = "static/style/img/fotoPerfil.png";
         }
 
     } catch (error) {
         console.error("Erro ao carregar a foto de perfil:", error);
-        // Mantém a imagem padrão em caso de erro
+        
         document.getElementById('foto-perfil-usuario').src = "static/style/img/fotoPerfil.png";
     }
 };
 
-// Função para renderizar os posts na página
+
 const renderPosts = (posts) => {
     const photoGrid = document.querySelector('.photo-grid');
 
-    // Limpa o conteúdo atual
+    
     photoGrid.innerHTML = '';
 
-    // Adiciona cada post ao grid
+    
     posts.forEach(post => {
         const photoItem = document.createElement('div');
         photoItem.className = 'photo-item';
@@ -125,7 +117,7 @@ const renderPosts = (posts) => {
         photoGrid.appendChild(photoItem);
     });
 
-    // Adiciona o evento de clique para abrir a tela de comentários
+    
     document.querySelectorAll('.square-image').forEach(image => {
         image.addEventListener('click', (event) => {
             const postId = image.getAttribute('data-post-id');
@@ -134,20 +126,59 @@ const renderPosts = (posts) => {
     });
 };
 
+const sairButton = document.querySelector(".top-right");
+if (sairButton) {
+    sairButton.addEventListener("click", function (event) {
+        event.preventDefault(); 
+        const accessToken = sessionStorage.getItem("access_token");
+
+        if (!accessToken) {
+            
+            window.location.href = "homepage.html";
+            return;
+        }
+
+        
+        fetch(`${API_BASE_URL}/auth/logout`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+            }
+        })
+        .then(response => {
+            console.log("Status da resposta:", response.status);
+
+            if (!response.ok) {
+                throw new Error("Erro ao sair da conta, tente novamente.");
+            }
+
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dados do usuário:", data);
+
+            window.location.href = "homepage.html";
+        })
+        .catch(error => {
+            console.error("Erro durante o logout:", error);
+            alert(error.message);
+        });
+    });
+}
 
 
 
-// Mostrar a tela semitransparente ao clicar no botão "Trocar Foto de Perfil"
+
 document.getElementById('trocar-foto-btn').addEventListener('click', () => {
     document.getElementById('overlay-foto-perfil').style.display = 'flex';
 });
 
-// Fechar a tela semitransparente ao clicar no botão "Cancelar"
+
 document.getElementById('fechar-overlay-foto-perfil').addEventListener('click', () => {
     document.getElementById('overlay-foto-perfil').style.display = 'none';
 });
 
-// Lógica para enviar a foto de perfil para o backend
+
 const trocarFotoForm = document.getElementById('trocar-foto-form');
 trocarFotoForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -196,7 +227,7 @@ trocarFotoForm.addEventListener('submit', async (event) => {
     }
 });
 
-// Lidar com a seleção de arquivo
+
 document.getElementById('foto-perfil').addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -215,7 +246,7 @@ document.getElementById('foto-perfil').addEventListener('change', (event) => {
 
 
 
-// Configura o evento de mudança para o input de arquivo
+
 const fileInput = document.getElementById('foto');
 const thumbnailImage = document.getElementById('thumbnail');
 const fileSelectedImage = document.getElementById('file-selected-image');
@@ -237,22 +268,22 @@ fileInput.addEventListener('change', (event) => {
     }
 });
 
-// Função para mostrar a tela semitransparente de publicação
+
 const overlay = document.getElementById('overlay');
 const publicarBtn = document.getElementById('publicar-btn');
 const fecharOverlayBtn = document.getElementById('fechar-overlay');
 
-// Mostrar a tela semitransparente ao clicar no botão "Publicar"
+
 publicarBtn.addEventListener('click', () => {
     overlay.style.display = 'flex';
 });
 
-// Fechar a tela semitransparente ao clicar no botão "Fechar"
+
 fecharOverlayBtn.addEventListener('click', () => {
     overlay.style.display = 'none';
 });
 
-// Lógica para enviar a foto e a legenda para o backend
+
 const publicarForm = document.getElementById('publicar-form');
 publicarForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -269,7 +300,6 @@ publicarForm.addEventListener('submit', async (event) => {
     const formData = new FormData();
     formData.append('legenda', legenda);
     formData.append('foto', foto);
-
     try {
         const response = await fetch(`${API_BASE_URL}/posts/create`, {
             method: "POST",
@@ -387,7 +417,7 @@ async function abrirTelaComentarios(postId) {
         alert('Erro ao carregar os dados do post ou comentários.');
     }
 }
-// Função para lidar com o clique no botão de curtir
+
 async function handleLikeClick(event) {
     event.stopPropagation();
     const postId = event.currentTarget.getAttribute('data-post-id');
@@ -400,12 +430,12 @@ async function handleLikeClick(event) {
 
     await curtirPost(postId);
 }
-// Função para fechar a tela semitransparente
+
 document.getElementById('close-overlay-comentarios').addEventListener('click', () => {
     document.getElementById('overlay-comentarios').style.display = 'none';
 });
 
-// Função para enviar um comentário
+
 document.getElementById('submit-comment').addEventListener('click', async () => {
     if (!currentPostId) {
         alert("Nenhum post selecionado.");
@@ -448,7 +478,7 @@ document.getElementById('submit-comment').addEventListener('click', async () => 
     }
 });
 
-// Adiciona o evento de clique ao botão "Excluir Post"
+
 document.getElementById('delete-post').addEventListener('click', async () => {
     if (!currentPostId) {
         alert("Nenhum post selecionado.");
@@ -488,7 +518,7 @@ document.getElementById('delete-post').addEventListener('click', async () => {
     }
 });
 
-// Função para curtir um post
+
 async function curtirPost(postId) {
     if (isLiking) return; // Ignora cliques adicionais enquanto uma requisição está em andamento
     isLiking = true;
@@ -531,7 +561,7 @@ async function curtirPost(postId) {
     }
 }
 
-// Função para descurtir um post
+
 async function descurtirPost(postId) {
     try {
         const response = await fetch(`${API_BASE_URL}/post/${postId}/curtir`, {
@@ -554,8 +584,7 @@ async function descurtirPost(postId) {
     }
 }
 
-// Função para atualizar o contador de curtidas
-// Função para atualizar o contador de curtidas
+
 async function atualizarContadorCurtidas(postId) {
     try {
         const response = await fetch(`${API_BASE_URL}/post/${postId}/get_like`, {
@@ -600,7 +629,7 @@ async function atualizarContadorCurtidas(postId) {
         console.error('Erro:', error);
     }
 }
-// Função para verificar se o usuário curtiu o post
+
 async function verificarSeUsuarioCurtiu(postId) {
     try {
         const response = await fetch(`${API_BASE_URL}/post/${postId}/get_like`, {
@@ -625,5 +654,5 @@ async function verificarSeUsuarioCurtiu(postId) {
         return false;
     }
 }
-// Chama a função para carregar o perfil
+
 getUserProfile();

@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.extensions import db
-from app.models import Usuario, Post
+from app.models import Usuario, Post, TokenBlacklist
 import re
 
 
@@ -37,7 +37,9 @@ class UserPostsResource(Resource):
 class CurrentUserResource(Resource):
     @jwt_required()
     def get(self):
-        print("def get(self):")
+        blacklist_check = check_token_blacklist()
+        if blacklist_check:
+            return blacklist_check
         user_id = get_jwt_identity()
         usuario = Usuario.query.get(user_id)
 
@@ -55,8 +57,12 @@ class CurrentUserResource(Resource):
 class UpdateUserResource(Resource):
     @jwt_required()
     def put(self):
+        blacklist_check = check_token_blacklist()
+        if blacklist_check:
+            return blacklist_check        
         user_id = get_jwt_identity()
         usuario = Usuario.query.get(user_id)
+
 
         if not usuario:
             return {"error": "Usuário não encontrado"}, 404
@@ -88,3 +94,12 @@ class UpdateUserResource(Resource):
                 "email": usuario.email
             }
         }, 200
+
+
+
+def check_token_blacklist():
+    decoded_token = get_jwt()
+    jti = decoded_token["jti"]
+    if TokenBlacklist.query.filter_by(token=jti).first():
+        return {"error": "Token inválido. Faça login novamente."}, 401
+    return None

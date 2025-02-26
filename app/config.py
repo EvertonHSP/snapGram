@@ -1,5 +1,4 @@
 import os
-# Importe timedelta para definir o tempo de expiração
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -18,5 +17,4 @@ class Config:
     JWT_HEADER_NAME = "Authorization"
     JWT_HEADER_TYPE = "Bearer"
 
-    # Defina o tempo de expiração do token para 2 dias
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=2)

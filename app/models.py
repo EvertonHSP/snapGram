@@ -26,9 +26,9 @@ class Usuario(db.Model, UserMixin):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # Renomeado de titulo para legenda
+    
     legenda = db.Column(db.String(255), nullable=False)
-    # Renomeado de conteudo para imagem
+    
     imagem = db.Column(db.String, nullable=False)
     data_criacao = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
@@ -83,8 +83,8 @@ class Curtida(db.Model):
 
 class PostSchema(Schema):
     id = fields.Int()
-    legenda = fields.Str()  # Renomeado de titulo para legenda
-    imagem = fields.Str()  # Renomeado de conteudo para imagem
+    legenda = fields.Str()
+    imagem = fields.Str()  
     data_criacao = fields.DateTime()
     id_usuario = fields.Int()
 
@@ -107,9 +107,9 @@ class TokenBlacklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(500), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'usuario.id'), nullable=False)  # Chave estrangeira
+        'usuario.id'), nullable=False)  
     usuario = db.relationship('Usuario', backref=db.backref(
-        'blacklisted_tokens', lazy=True))  # Relacionamento com o usuário
+        'blacklisted_tokens', lazy=True)) 
 
     def __init__(self, token, user_id):
         self.token = token

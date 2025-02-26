@@ -1,16 +1,15 @@
 from flask import Blueprint
 from flask_restful import Api
 from app.api.auth import RegisterResource, LoginResource, LogoutResource
-# Importe a classe DeletePostResource
 from app.api.post import PostResource, PostListResource, CreatePostResource, DeletePostResource, UploadFotoPerfilResource, FotoPerfilResource
 from app.api.user import UserResource, UserPostsResource, CurrentUserResource, UpdateUserResource
 from app.api.comments import ComentarioListResource, CreateComentarioResource
 from app.api.likes import PostLikesResource, CurtirPostResource
 
-# Cria o Blueprint para a API
+
 api_bp = Blueprint('api', __name__)
 
-# Cria a instância da API
+
 api = Api(api_bp)
 
 # Rotas de autenticação
@@ -40,8 +39,6 @@ api.add_resource(CreateComentarioResource,
 # Rotas de curtidas
 api.add_resource(PostLikesResource, '/post/<int:post_id>/get_like')
 api.add_resource(CurtirPostResource, '/post/<int:post_id>/curtir')
-
-# Função para inicializar a API no app Flask
 
 
 def init_app(app):

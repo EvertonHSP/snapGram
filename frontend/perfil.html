@@ -10,7 +10,7 @@
 <body>
     <div class="header">
         <a href="feed.html" class="top-left">Feed</a>
-        <a href="homepage.html" class="top-right">Sair</a>
+        <a href="#" class="top-right">Sair</a>
     </div>
 
     <div class="profile-container">
@@ -18,13 +18,13 @@
             <img src="static/style/img/fotoPerfil.png" alt="Foto de Perfil" id="foto-perfil-usuario">
         </div>
         <h2><span id="user-name">Carregando...</span></h2>
-        <!-- Botão "Trocar Foto de Perfil" -->
+        
         <div class="form-container">
             <button id="trocar-foto-btn" class="upload-btn">Trocar Foto de Perfil</button>
         </div>
     </div>
 
-    <!-- Tela semitransparente para troca de foto de perfil (inicialmente oculta) -->
+    
     <div id="overlay-foto-perfil" class="overlay">
         <div class="overlay-content">
             <form id="trocar-foto-form" method="post" enctype="multipart/form-data">
@@ -43,12 +43,11 @@
         </div>
     </div>
 
-    <!-- Botão "Publicar" -->
+    
     <div class="form-container">
         <button id="publicar-btn" class="upload-btn">Publicar</button>
     </div>
 
-    <!-- Tela semitransparente (inicialmente oculta) -->
     <div id="overlay" class="overlay">
         <div class="overlay-content">
             <form id="publicar-form" method="post" enctype="multipart/form-data">
@@ -68,16 +67,16 @@
         </div>
     </div>
 
-    <!-- Tela semitransparente de comentários (inicialmente oculta) -->
+
     <div id="overlay-comentarios" class="overlay overlay-comentarios">
         <div class="overlayContent">
             <div id="sair_cmnt">
-                <!-- Botão "Excluir Post" na extrema esquerda -->
+                
                 <button id="delete-post" class="upload-btn delete-btn">Excluir Post</button>
-                <!-- Botão "Fechar" na extrema direita -->
+                
                 <button id="close-overlay-comentarios" class="upload-btn">Fechar</button>
             </div>
-            <!-- Seção 1: Informações do post -->
+            
             <div id="post-info">
                 <div class="user-info">
                     <img id="post-profile-image" src="" alt="Foto de perfil" class="profile-image">
@@ -96,15 +95,15 @@
                 </div>
             </div>
 
-            <!-- Seção 2: Área de comentários -->
+            
             <div id="comment-section">
                 <textarea id="comment-input" placeholder="Digite seu comentário..."></textarea>
                 <button id="submit-comment" class="upload-btn">Comentar</button>
             </div>
 
-            <!-- Seção 3: Lista de comentários (deslizante) -->
+            
             <div id="comments-list">
-                <!-- Os comentários serão carregados dinamicamente pelo JavaScript -->
+                
             </div>
         </div>
     </div>
@@ -117,7 +116,7 @@
     </div>
 
 
-    <!-- Scripts -->
+    
     <script src="static/scripts/perfil.js"></script>
 </body>
 

@@ -3,22 +3,21 @@ import os
 from flask import request, Flask, url_for
 from werkzeug.utils import secure_filename
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.extensions import db
-from app.models import Post, Usuario, Curtida
+from app.models import Post, Usuario, Curtida, TokenBlacklist
 
 
 class PostLikesResource(Resource):
     def get(self, post_id):
-        # Busca o post pelo ID
+        
         post = Post.query.get(post_id)
         if not post:
             return {"error": "Post não encontrado"}, 404
 
-        # Obtém as curtidas do post
+        
         curtidas = Curtida.query.filter_by(id_post=post_id).all()
 
-        # Lista para armazenar os usuários que curtiram o post
         usuarios_curtiu = []
         for curtida in curtidas:
             usuario = Usuario.query.get(curtida.id_usuario)
@@ -28,7 +27,7 @@ class PostLikesResource(Resource):
                     "username": usuario.username
                 })
 
-        # Retorna as curtidas do post
+        
         return {
             "post_id": post_id,
             "total_curtidas": len(curtidas),
@@ -37,61 +36,75 @@ class PostLikesResource(Resource):
 
 
 class CurtirPostResource(Resource):
-    @jwt_required()  # Requer autenticação JWT
+    @jwt_required()  
     def post(self, post_id):
-        # Obtém o ID do usuário logado
+        blacklist_check = check_token_blacklist()
+        if blacklist_check:
+            return blacklist_check
+        
         user_id = get_jwt_identity()
 
-        # Verifica se o post existe
         post = Post.query.get(post_id)
         if not post:
             return {"error": "Post não encontrado"}, 404
 
-        # Verifica se o usuário já curtiu o post
+        
         curtida_existente = Curtida.query.filter_by(
             id_post=post_id, id_usuario=user_id).first()
         if curtida_existente:
             return {"message": "Você já curtiu este post"}, 400
 
-        # Cria uma nova curtida
+        
         nova_curtida = Curtida(id_usuario=user_id, id_post=post_id)
 
         try:
-            # Adiciona a nova curtida ao banco de dados
+            
             db.session.add(nova_curtida)
             db.session.commit()
             return {"message": "Post curtido com sucesso"}, 201
         except IntegrityError:
-            # Em caso de violação de restrição única, faz rollback e retorna erro
+            
             db.session.rollback()
             return {"error": "Erro ao curtir o post: você já curtiu este post."}, 400
         except Exception as e:
-            # Captura outras exceções inesperadas
+            
             db.session.rollback()
             return {"error": f"Erro inesperado: {str(e)}"}, 500
 
-    @jwt_required()  # Requer autenticação JWT
+    @jwt_required()  
     def delete(self, post_id):
-        # Obtém o ID do usuário logado
+        blacklist_check = check_token_blacklist()
+        if blacklist_check:
+            return blacklist_check
+       
         user_id = get_jwt_identity()
 
-        # Verifica se o post existe
+        
         post = Post.query.get(post_id)
         if not post:
             return {"error": "Post não encontrado"}, 404
 
-        # Verifica se o usuário já curtiu o post
+        
         curtida_existente = Curtida.query.filter_by(
             id_post=post_id, id_usuario=user_id).first()
         if not curtida_existente:
             return {"message": "Você ainda não curtiu este post"}, 400
 
         try:
-            # Remove a curtida do banco de dados
+            
             db.session.delete(curtida_existente)
             db.session.commit()
             return {"message": "Curtida removida com sucesso"}, 200
         except Exception as e:
-            # Captura exceções inesperadas
+            
             db.session.rollback()
             return {"error": f"Erro inesperado: {str(e)}"}, 500
+
+
+
+def check_token_blacklist():
+    decoded_token = get_jwt()
+    jti = decoded_token["jti"]
+    if TokenBlacklist.query.filter_by(token=jti).first():
+        return {"error": "Token inválido. Faça login novamente."}, 401
+    return None

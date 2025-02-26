@@ -69,14 +69,10 @@ a {
 
 .photo-caption {
     text-align: left;
-    /* Alinha o texto à direita */
     color: #fff;
-    /* Cor do texto (ajuste conforme necessário) */
     font-size: 1.3vw;
-    /* Tamanho da fonte (ajuste conforme necessário) */
     margin-top: 5px;
     margin-bottom: 5px;
-    /* Espaço acima da legenda (ajuste conforme necessário) */
 }
 
 .square-image {
@@ -108,9 +104,10 @@ a {
 }
 
 .profile-image {
-    width: 4%;
-    height: 4%;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
+    object-fit: cover;
     margin-right: 1%;
     margin-bottom: 1%;
 }
@@ -139,7 +136,7 @@ a {
 
 .like-count {
     font-size: 14px;
-    color: #333;
+    color: rgba(255, 255, 255, 1);
 }
 
 .comments-button {

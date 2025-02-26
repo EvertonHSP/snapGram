@@ -147,25 +147,20 @@ h2 {
 
 #publicar-form {
     height: 95%;
-    /* 90% da altura do .overlay-content */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-/* Novos estilos para a tela semitransparente */
 .overlay {
     display: none;
-    /* Oculta a tela inicialmente */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    /* Fundo semitransparente */
     z-index: 1000;
-    /* Garante que a tela fique acima de tudo */
     justify-content: center;
     align-items: center;
 }
@@ -349,10 +344,7 @@ h2 {
     border-radius: 5px;
 }
 
-/* Botão para fechar a tela semitransparente */
 
-
-/* Personalizando a barra de rolagem */
 #comments-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -377,9 +369,10 @@ h2 {
 }
 
 .profile-image {
-    width: 4%;
-    height: 4%;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
+    object-fit: cover;
     margin-right: 1%;
     margin-bottom: 1%;
 }
@@ -408,7 +401,7 @@ h2 {
 
 .like-count {
     font-size: 14px;
-    color: #333;
+    color: rgba(255, 255, 255, 1);
 }
 
 #sair_cmnt {
